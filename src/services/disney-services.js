@@ -69,7 +69,7 @@ export class DisneyService
 
     static getByFilterC = async (params) =>
     {
-        let returnEntity = null;
+        let returnList = null;
         let where = '';
         if(params.nombre != null)
         {
@@ -95,11 +95,11 @@ export class DisneyService
                 .input('pPeso',sql.Float,params.peso)
                 .input('pPeli',sql.Int,params.pelicula)
                 .query('SELECT per.Imagen, per.Nombre, per.Id FROM Personaje inner join PersonajesXPeliculas pxp on pxp.IdPersonaje = per.Id inner join Pelicula pel on pxp.IdPelicula = pel.Id WHERE ' + where.slice(0,this.length-6));
-            returnEntity = result.recordsets[0];
+            returnList = result.recordsets[0];
         } catch(error){
             console.log(error);
         }
-        return returnEntity;
+        return returnList;
     }
 
     static getAllM = async () =>

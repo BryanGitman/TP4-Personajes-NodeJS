@@ -13,6 +13,12 @@ app.get('/characters', async (req, res) =>
     res.status(200).send(personajes);
 });
 
+app.get('/characters?:nombre&:edad&:peso&:pelicula', async (req, res) =>
+{
+    const personajes = await DisneyService.getByFilterC(req.params);
+    res.status(200).send(personajes);
+});
+
 app.get('/characters/:id', async (req, res) =>
 {
     const personaje = await DisneyService.getByIdC(req.params.id);
