@@ -1,1 +1,1 @@
-Para investigar https://www.section.io/engineering-education/how-to-build-authentication-api-with-jwt-token-in-nodejs/
+Para investigar https://www.bezkoder.com/node-js-jwt-authentication-mysql/

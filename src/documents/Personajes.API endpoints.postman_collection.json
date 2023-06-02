@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "21c25b04-89b8-4ba2-a4e3-fd1f6c6798e6",
+		"_postman_id": "9110460d-bc3a-46e6-9ce7-1b5d41e0e758",
 		"name": "Personajes.API endpoints",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -12,7 +12,13 @@
 					"name": "Get all characters",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODU3MTg1MDAsImV4cCI6MTY4NTcyMjEwMH0.sOkSy2TKMDvFfcPiGVCbum3UyOe8ph2P-FffFY7rBBM",
+								"type": "default"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/characters",
 							"protocol": "http",
@@ -31,7 +37,13 @@
 					"name": "Get character by id",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODU3MTg1MDAsImV4cCI6MTY4NTcyMjEwMH0.sOkSy2TKMDvFfcPiGVCbum3UyOe8ph2P-FffFY7rBBM",
+								"type": "default"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/characters/1",
 							"protocol": "http",
@@ -51,7 +63,13 @@
 					"name": "Get all movies",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODU3MTg1MDAsImV4cCI6MTY4NTcyMjEwMH0.sOkSy2TKMDvFfcPiGVCbum3UyOe8ph2P-FffFY7rBBM",
+								"type": "default"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/movies",
 							"protocol": "http",
@@ -70,7 +88,13 @@
 					"name": "Get movie by id",
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "x-access-token",
+								"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODU3MTg1MDAsImV4cCI6MTY4NTcyMjEwMH0.sOkSy2TKMDvFfcPiGVCbum3UyOe8ph2P-FffFY7rBBM",
+								"type": "default"
+							}
+						],
 						"url": {
 							"raw": "http://localhost:3000/movies/3",
 							"protocol": "http",
@@ -250,6 +274,46 @@
 							"path": [
 								"movies",
 								"8"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "http://localhost:3000/auth/login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user\": \"Personajes\",\r\n    \"password\": \"Personajes\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/auth/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"auth",
+								"login"
 							]
 						}
 					},

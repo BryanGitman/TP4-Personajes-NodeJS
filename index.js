@@ -7,25 +7,63 @@ const port = 3000;
 app.use(express.json());
 app.use(cors());
 
-app.get('/characters', async (req, res) =>
+//Autenticación:
+import {config} from "./authconfig.js";
+import jwt from "jsonwebtoken";
+import authJwt from "./src/middlewares/authJwt.js";
+
+app.use(function(req, res, next) {
+    res.header(
+      "Access-Control-Allow-Headers",
+      "x-access-token, Origin, Content-Type, Accept"
+    );
+    next();
+});
+
+app.post('/auth/login', async (req, res) =>
 {
-    const personajes = await DisneyService.getAllC();
+    try {
+        let user = req.body.user;
+        if (user != process.env.DB_USER) 
+        {
+            return res.status(404).send({ message: "Usuario no válido." });
+        }
+        if (req.body.password != process.env.DB_PASSWORD) 
+        {
+            return res.status(401).send({
+            accessToken: null,
+            message: "Contraseña no válida!"
+            });
+        }
+        let token = jwt.sign({ id: user.id }, config.secret, {
+            expiresIn: 3600
+        });
+        res.status(200).send({
+            message: "Sesión iniciada exitosamente",
+            user: user,
+            accessToken: token
+        });
+    } catch(error){
+        console.log(error);
+        res.status(500).json({error: 'Falló el login'});
+    }
+});
+//Fin autenticación
+
+app.get('/characters', [authJwt.verifyToken], async (req, res) => 
+{
+    const filters = req.query;
+    const personajes = await DisneyService.getAllC(filters);
     res.status(200).send(personajes);
 });
 
-app.get('/characters?:nombre&:edad&:peso&:pelicula', async (req, res) =>
-{
-    const personajes = await DisneyService.getByFilterC(req.params);
-    res.status(200).send(personajes);
-});
-
-app.get('/characters/:id', async (req, res) =>
+app.get('/characters/:id', [authJwt.verifyToken], async (req, res) =>
 {
     const personaje = await DisneyService.getByIdC(req.params.id);
     res.status(200).send(personaje);
 });
 
-app.post('/characters', async (req, res) =>
+app.post('/characters', [authJwt.verifyToken], async (req, res) =>
 {
     try {
         await DisneyService.insertC(req.body);
@@ -36,7 +74,7 @@ app.post('/characters', async (req, res) =>
     }
 });
 
-app.put('/characters/:id', async (req, res) =>
+app.put('/characters/:id', [authJwt.verifyToken], async (req, res) =>
 {
     if(req.params.id == req.body.Id)
     {
@@ -54,7 +92,7 @@ app.put('/characters/:id', async (req, res) =>
     }
 });
 
-app.delete('/characters/:id', async (req, res) =>
+app.delete('/characters/:id', [authJwt.verifyToken], async (req, res) =>
 {
     try {
         await DisneyService.deleteByIdC(req.params.id);
@@ -65,19 +103,20 @@ app.delete('/characters/:id', async (req, res) =>
     }
 });
 
-app.get('/movies', async (req, res) =>
+app.get('/movies', [authJwt.verifyToken], async (req, res) =>
 {
-    const movies = await DisneyService.getAllM();
+    const filters = req.query;
+    const movies = await DisneyService.getAllM(filters);
     res.status(200).send(movies);
 });
 
-app.get('/movies/:id', async (req, res) =>
+app.get('/movies/:id', [authJwt.verifyToken], async (req, res) =>
 {
     const movie = await DisneyService.getByIdM(req.params.id);
     res.status(200).send(movie);
 });
 
-app.post('/movies', async (req, res) =>
+app.post('/movies', [authJwt.verifyToken], async (req, res) =>
 {
     try {
         await DisneyService.insertM(req.body);
@@ -88,7 +127,7 @@ app.post('/movies', async (req, res) =>
     }
 });
 
-app.put('/movies/:id', async (req, res) =>
+app.put('/movies/:id', [authJwt.verifyToken], async (req, res) =>
 {
     if(req.params.id == req.body.Id)
     {
@@ -106,7 +145,7 @@ app.put('/movies/:id', async (req, res) =>
     }
 });
 
-app.delete('/movies/:id', async (req, res) =>
+app.delete('/movies/:id', [authJwt.verifyToken], async (req, res) =>
 {
     try {
         await DisneyService.deleteByIdM(req.params.id);

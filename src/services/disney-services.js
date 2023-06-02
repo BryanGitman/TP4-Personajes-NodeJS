@@ -3,12 +3,38 @@ import sql from 'mssql';
 
 export class DisneyService
 {
-    static getAllC = async () =>
+    static getAllC = async (filters) =>
     {
         let returnList = null;
+        let where = '';
+        if(Object.keys(filters).length != 0)
+        {
+            where += ' WHERE ';
+        }
+        if(filters['nombre'] != null)
+        {
+            where += 'per.Nombre like @pNombre AND ';
+        }
+        if(filters['edad'] != null)
+        {
+            where += 'per.Edad = @pEdad AND ';
+        }
+        if(filters['peso'] != null)
+        {
+            where += 'per.Peso = @pPeso AND ';
+        }
+        if(filters['pelicula'] != null)
+        {
+            where += 'pxp.IdPelicula = @pPeli AND ';
+        }
         try{
             let pool = await sql.connect(config);
-            let result = await pool.request().query('SELECT Imagen, Nombre, Id FROM Personaje');
+            let result = await pool.request()
+                .input('pNombre',sql.NVarChar,'%' + filters['nombre'] + '%')
+                .input('pEdad',sql.Int,filters['edad'])
+                .input('pPeso',sql.Float,filters['peso'])
+                .input('pPeli',sql.Int,filters['pelicula'])
+                .query('SELECT per.Imagen, per.Nombre, per.Id FROM Personaje per inner join PersonajesXPeliculas pxp on pxp.IdPersonaje = per.Id' + where.slice(0,this.length-5));
             returnList = result.recordsets[0];
         } catch(error){
             console.log(error);
@@ -67,47 +93,16 @@ export class DisneyService
         request.input('pId',sql.Int,id).query('DELETE FROM Personaje WHERE Id = @pId');
     }
 
-    static getByFilterC = async (params) =>
+    static getAllM = async (filters) =>
     {
         let returnList = null;
-        let where = '';
-        if(params.nombre != null)
-        {
-            where += 'per.Nombre like @pNombre AND ';
-        }
-        if(params.edad != null)
-        {
-            where += 'per.Edad = @pEdad AND ';
-        }
-        if(params.peso != null)
-        {
-            where += 'per.Peso = @pPeso AND ';
-        }
-        if(params.pelicula != null)
-        {
-            where += 'pel.Id = @pPeli AND ';
-        }
+        let where = filters['titulo'] != null ? ' WHERE Titulo like @pTitulo' : '';
+        let order = filters['orden'] != null ? filters['orden'] : '';
         try{
             let pool = await sql.connect(config);
             let result = await pool.request()
-                .input('pNombre',sql.NVarChar,params.nombre)
-                .input('pEdad',sql.Int,params.edad)
-                .input('pPeso',sql.Float,params.peso)
-                .input('pPeli',sql.Int,params.pelicula)
-                .query('SELECT per.Imagen, per.Nombre, per.Id FROM Personaje inner join PersonajesXPeliculas pxp on pxp.IdPersonaje = per.Id inner join Pelicula pel on pxp.IdPelicula = pel.Id WHERE ' + where.slice(0,this.length-6));
-            returnList = result.recordsets[0];
-        } catch(error){
-            console.log(error);
-        }
-        return returnList;
-    }
-
-    static getAllM = async () =>
-    {
-        let returnList = null;
-        try{
-            let pool = await sql.connect(config);
-            let result = await pool.request().query('SELECT Id, Imagen, Titulo, FechaCreacion FROM Pelicula');
+                .input('pTitulo',sql.NVarChar,'%' + filters['titulo'] + '%')
+                .query('SELECT Id, Imagen, Titulo, FechaCreacion FROM Pelicula' + where + ' ORDER BY FechaCreacion ' + order);
             returnList = result.recordsets[0];
         } catch(error){
             console.log(error);
