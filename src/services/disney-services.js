@@ -34,7 +34,7 @@ export class DisneyService
                 .input('pEdad',sql.Int,filters['edad'])
                 .input('pPeso',sql.Float,filters['peso'])
                 .input('pPeli',sql.Int,filters['pelicula'])
-                .query('SELECT per.Imagen, per.Nombre, per.Id FROM Personaje per inner join PersonajesXPeliculas pxp on pxp.IdPersonaje = per.Id' + where.slice(0,this.length-5));
+                .query('SELECT per.Imagen, per.Nombre, per.Id FROM Personaje per left join PersonajesXPeliculas pxp on pxp.IdPersonaje = per.Id' + where.slice(0,this.length-5));
             returnList = result.recordsets[0];
         } catch(error){
             console.log(error);
